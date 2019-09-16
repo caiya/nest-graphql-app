@@ -1,0 +1,40 @@
+type Query {
+  users: [User]
+  user(id: ID!): User
+  getArticlesByUserId(id: ID!): [Article]
+}
+
+type Mutation {
+  createUser(user: UserInput!): User
+  updateUser(id: ID!, user: UserInput!): Boolean
+  delUser(id: ID!): Boolean
+  login(user: UserLogin!): Token
+}
+
+type Token {
+  accessToken: String
+}
+
+type User {
+  id: Int
+  username: String
+  password: String
+  age: Int
+  birth: String
+  permis: String
+  articles: [Article]
+}
+
+
+input UserInput {
+  username: String!
+  password: String!
+  age: Int!
+  birth: String!
+  permis: String
+}
+
+input UserLogin {
+  username: String!
+  password: String!
+}
