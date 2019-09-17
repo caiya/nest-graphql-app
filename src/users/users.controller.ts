@@ -1,17 +1,19 @@
-import { Controller, Get, Request, Post, UseGuards, UseInterceptors, UploadedFile } from '@nestjs/common';
+import { Controller, Get, Request, Post, UseGuards, UseInterceptors, UploadedFile, Param, Query } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from '../auth/auth.service';
 import { RequirePermits } from '../permits/auth.decorator';
 import { RequirePermitsGuard } from '../permits/auth.guard';
 import { ApiBearerAuth, ApiOperation, ApiUseTags } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { OssService } from '../oss/oss.service';
+import { writeFileSync } from 'fs';
 
 @Controller('users')
 @ApiBearerAuth()
 @ApiUseTags('用户模块')
 export class UsersController {
 
-    constructor(private readonly authService: AuthService) { }
+    constructor(private readonly authService: AuthService, private readonly ossService: OssService) { }
 
     @UseGuards(AuthGuard('local'))
     @Post('login')
@@ -30,7 +32,29 @@ export class UsersController {
 
     @Post('upload')
     @UseInterceptors(FileInterceptor('file'))
-    uploadFile(@UploadedFile() file) {
+    async uploadFile(@UploadedFile() file) {
         console.log(file);
+        // const buckets = await this.ossService.listBuckets()
+        writeFileSync
+        const results = await this.ossService.uploadFile(file)
+        // 入库+水印
+        console.log('results:', results)
+        return results
     }
+
+    @Get('file')
+    async getUploadUrl(@Query('name') name: string) {
+        console.log(name)
+        const fileUrl = await this.ossService.getUploadFileUrl(name)
+        return {
+            url: fileUrl
+        }
+    }
+
+    @Get('upload')
+    async listUploads() {
+        const results = await this.ossService.listUploadFiles()
+        return results
+    }
+
 }

@@ -12,6 +12,7 @@ import { join } from 'path'
 import { JwtModule } from '@nestjs/jwt';
 import { AuthService } from './auth/auth.service';
 import { LogModule } from './log/log.module';
+import { OssModule } from './oss/oss.module';
 
 @Module({
   imports: [
@@ -36,7 +37,7 @@ import { LogModule } from './log/log.module';
       },
       installSubscriptionHandlers: false, // ws环境才能用到
     }),
-    AuthModule, PermitsModule, ArticlesModule, UsersModule, LogModule, 
+    AuthModule, PermitsModule, ArticlesModule, UsersModule, LogModule, OssModule, 
   ],
   controllers: [AppController],
   providers: [AppService],
