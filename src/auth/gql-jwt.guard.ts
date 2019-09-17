@@ -34,13 +34,11 @@ export class GqlJwtAuthGuard extends AuthGuard('jwt') {
     } catch (err) {
       if (err instanceof TokenExpiredError) {
         const payload = await this.authService.decodeToken(token)
-        const result: Token = await this.authService.login({
-          id: payload.sub
-        })
         // 重新设置上下文的user，否则后面权限guard不识别还会拦截
         request.user = {
           id: payload.sub
         }
+        const result: Token = await this.authService.login(request.user)
         console.log('新生成的token', result)
         request.headers['Authorization'] = `Bearer ${result.accessToken}`
         response.set({
