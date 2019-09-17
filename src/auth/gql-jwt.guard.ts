@@ -2,17 +2,18 @@ import { AuthGuard } from "@nestjs/passport";
 import { Injectable, ExecutionContext, UnauthorizedException, ReflectMetadata } from "@nestjs/common";
 import { GqlExecutionContext } from "@nestjs/graphql";
 
-export const TokenExpiredErrorInfo = 'TokenExpiredError'
-export const JwtExpiredErrorInfo = 'jwt expired'
-
 import { ExtractJwt } from 'passport-jwt';
 import { AuthService } from "./auth.service";
 import { Token } from "../graphql";
+import { ModuleRef } from "@nestjs/core";
+import { UsersService } from "../users/users.service";
+
+import {TokenExpiredError, JsonWebTokenError } from 'jsonwebtoken'
 
 @Injectable()
 export class GqlJwtAuthGuard extends AuthGuard('jwt') {
 
-  constructor(private readonly authService: AuthService) {
+  constructor(private readonly authService: AuthService, private readonly moduleRef: ModuleRef) {
     super();
   }
 
@@ -30,8 +31,8 @@ export class GqlJwtAuthGuard extends AuthGuard('jwt') {
     try {
       await this.authService.isInvalidToken(token)
       return await this.toCanActive(context);
-    } catch (TokenExpiredError) {
-      if (TokenExpiredError.name === TokenExpiredErrorInfo) {
+    } catch (err) {
+      if (err instanceof TokenExpiredError) {
         const payload = await this.authService.decodeToken(token)
         const result: Token = await this.authService.login({
           id: payload.sub
@@ -57,8 +58,10 @@ export class GqlJwtAuthGuard extends AuthGuard('jwt') {
   }
 
   handleRequest(err, user, info) {
+    const userService = this.moduleRef.get(UsersService, {strict: false})
+    // console.log('获取容器的userService', userService)
     if (err || !user) {
-      throw err || new UnauthorizedException();
+      throw err || new UnauthorizedException('token错误');
     }
     return user;
   }
