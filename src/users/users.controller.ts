@@ -1,4 +1,4 @@
-import { Controller, Get, Request, Post, UseGuards, UseInterceptors, UploadedFile, Param, Query } from '@nestjs/common';
+import { Controller, Get, Request, Post, UseGuards, UseInterceptors, UploadedFile, Param, Query, Res } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from '../auth/auth.service';
 import { RequirePermits } from '../permits/auth.decorator';
@@ -6,7 +6,8 @@ import { RequirePermitsGuard } from '../permits/auth.guard';
 import { ApiBearerAuth, ApiOperation, ApiUseTags } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { OssService } from '../oss/oss.service';
-import { writeFileSync } from 'fs';
+import { Policy } from '../oss/interfaces/policy.interface';
+import { Response } from 'express';
 
 @Controller('users')
 @ApiBearerAuth()
@@ -35,10 +36,8 @@ export class UsersController {
     async uploadFile(@UploadedFile() file) {
         console.log(file);
         // const buckets = await this.ossService.listBuckets()
-        writeFileSync
         const results = await this.ossService.uploadFile(file)
         // 入库+水印
-        console.log('results:', results)
         return results
     }
 
@@ -57,4 +56,14 @@ export class UsersController {
         return results
     }
 
+    @ApiOperation({ title: '获取客户端回调上传的policy信息' })
+    @Get('getUploadPolicy')
+    async getUploadPolicy(@Res() res: Response) {
+        // 设置跨域允许
+        res.setHeader("Access-Control-Allow-Origin", "*");
+        res.setHeader("Access-Control-Allow-Headers", "X-Requested-With,Content-Type");
+        res.setHeader("Access-Control-Allow-Methods", "PUT,POST,GET,DELETE,OPTIONS");
+        res.setHeader("Cache-Control","no-store")
+        res.json(await this.ossService.generatePolicyInfo())
+    }
 }
