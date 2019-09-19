@@ -13,7 +13,7 @@ export class OssService {
     public static readonly accessKeySecret = 'L6AKp7ebpEsiUfdqK7FFoj8Qy3Fn3X' // 请填写您的AccessKeySecret
     public static readonly endpoint = 'oss-cn-beijing.aliyuncs.com' // 请填写您的endpoint
     public static readonly bucket = 'ossaliyunbucket2' // 请填写您的 bucketname
-    public static readonly host = "https://" + OssService.bucket + "." + OssService.endpoint // host的格式为 bucketname.endpoint
+    public static readonly host = "http://" + OssService.bucket + "." + OssService.endpoint // host的格式为 bucketname.endpoint
 
     // callbackUrl为 上传回调服务器的URL，请将下面的IP和Port配置为您自己的真实信息
     public static readonly callbackUrl = 'http://47.56.164.203'
