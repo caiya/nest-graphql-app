@@ -9,13 +9,17 @@ import { PermitsModule } from './permits/permits.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { GraphQLModule } from '@nestjs/graphql';
 import { join } from 'path'
-import { JwtModule } from '@nestjs/jwt';
-import { AuthService } from './auth/auth.service';
 import { LogModule } from './log/log.module';
 import { OssModule } from './oss/oss.module';
 
+import { RedisModule} from 'nestjs-redis'
+
 @Module({
   imports: [
+    RedisModule.register({
+      name: 'redis-1',
+      url: 'redis://127.0.0.1:6379'
+    }),
     CacheModule.register(),
     TypeOrmModule.forRoot({
       type: 'mysql',

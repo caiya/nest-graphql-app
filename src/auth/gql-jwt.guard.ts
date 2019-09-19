@@ -6,14 +6,14 @@ import { ExtractJwt } from 'passport-jwt';
 import { AuthService } from "./auth.service";
 import { Token } from "../graphql";
 import { ModuleRef } from "@nestjs/core";
-import { UsersService } from "../users/users.service";
 
-import {TokenExpiredError, JsonWebTokenError } from 'jsonwebtoken'
+import {TokenExpiredError } from 'jsonwebtoken'
+import { RedisService } from "nestjs-redis";
 
 @Injectable()
 export class GqlJwtAuthGuard extends AuthGuard('jwt') {
 
-  constructor(private readonly authService: AuthService, private readonly moduleRef: ModuleRef) {
+  constructor(private readonly authService: AuthService, private readonly moduleRef: ModuleRef, private readonly redisService: RedisService) {
     super();
   }
 
@@ -28,12 +28,22 @@ export class GqlJwtAuthGuard extends AuthGuard('jwt') {
     const token = ExtractJwt.fromAuthHeaderAsBearerToken()(
       request,
     );
+    const payload = await this.authService.decodeToken(token)
+    if (!payload) {
+      throw new UnauthorizedException('token无效')
+    }
     try {
+      // 如果token有效，再判断当前已登录的设备中有无该token
+      let client = this.redisService.getClient()
+      let hasExist = !!(await client.sismember(`user:login:${payload.sub}`, token))
+      if (!hasExist) {
+        throw new UnauthorizedException('您的账号在其它设备已登录')
+      }
+
       await this.authService.isInvalidToken(token)
       return await this.toCanActive(context);
     } catch (err) {
       if (err instanceof TokenExpiredError) {
-        const payload = await this.authService.decodeToken(token)
         // 重新设置上下文的user，否则后面权限guard不识别还会拦截
         request.user = {
           id: payload.sub
@@ -47,7 +57,7 @@ export class GqlJwtAuthGuard extends AuthGuard('jwt') {
         // 直接返回true表示不进行拦截
         return true;
       }
-      return await this.toCanActive(context);
+      throw err
     }
   }
 
@@ -56,10 +66,10 @@ export class GqlJwtAuthGuard extends AuthGuard('jwt') {
   }
 
   handleRequest(err, user, info) {
-    const userService = this.moduleRef.get(UsersService, {strict: false})
+    // const userService = this.moduleRef.get(UsersService, {strict: false})
     // console.log('获取容器的userService', userService)
     if (err || !user) {
-      throw err || new UnauthorizedException('token错误');
+      throw err || new UnauthorizedException('token无效');
     }
     return user;
   }
