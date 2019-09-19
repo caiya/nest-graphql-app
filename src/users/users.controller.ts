@@ -1,4 +1,4 @@
-import { Controller, Get, Request, Post, UseGuards, UseInterceptors, UploadedFile, Param, Query, Res } from '@nestjs/common';
+import { Controller, Get, Request, Post, UseGuards, UseInterceptors, UploadedFile, Param, Query, Res, UnauthorizedException } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from '../auth/auth.service';
 import { RequirePermits } from '../permits/auth.decorator';
@@ -58,12 +58,12 @@ export class UsersController {
 
     @ApiOperation({ title: '获取客户端回调上传的policy信息' })
     @Get('getUploadPolicy')
-    async getUploadPolicy(@Res() res: Response) {
-        // 设置跨域允许
-        res.setHeader("Access-Control-Allow-Origin", "*");
-        res.setHeader("Access-Control-Allow-Headers", "X-Requested-With,Content-Type");
-        res.setHeader("Access-Control-Allow-Methods", "PUT,POST,GET,DELETE,OPTIONS");
-        res.setHeader("Cache-Control","no-store")
-        res.json(await this.ossService.generatePolicyInfo())
+    async getUploadPolicy() {
+        // // 设置跨域允许（全局设置了这里就可以不用设置了）
+        // res.setHeader("Access-Control-Allow-Origin", "*");
+        // res.setHeader("Access-Control-Allow-Headers", "X-Requested-With,Content-Type");
+        // res.setHeader("Access-Control-Allow-Methods", "PUT,POST,GET,DELETE,OPTIONS");
+        // res.setHeader("Cache-Control","no-store")
+        return await this.ossService.generatePolicyInfo()
     }
 }

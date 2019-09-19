@@ -19,7 +19,7 @@ export class OssService {
     private static readonly callbackUrl = 'http://47.56.164.203'
     // callbackbody内容
     private static readonly callbackBody = 'bucket=${bucket}&object=${object}&etag=${etag}&size=${size}&mimeType=${mimeType}&imageInfo.height=${imageInfo.height}&imageInfo.width=${imageInfo.width}&imageInfo.format=${imageInfo.format}'
-    private static readonly dir = 'hzlh/' // 用户上传文件时指定的前缀
+    private static readonly dir = 'user-dir/' // 用户上传文件时指定的前缀
     private static readonly region = 'oss-cn-beijing' // bucket所在区域
 
     public static readonly client = new OSS({
@@ -52,7 +52,7 @@ export class OssService {
 
     // 获取指定文件详情
     async getUploadFileUrl(name: string): Promise<string> {
-        return OssService.client.generateObjectUrl(name)
+        return OssService.client.signatureUrl(name)
     }
 
     // 生成policy信息
@@ -96,7 +96,6 @@ export class OssService {
             callback: encode(JSON.stringify(callback)),
             dir: OssService.dir
         }
-        console.log('policy', policy)
         return policy
     }
 }
