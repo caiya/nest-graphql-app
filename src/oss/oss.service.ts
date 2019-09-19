@@ -9,18 +9,18 @@ import * as CryptoJS from 'crypto-js';
 @Injectable()
 export class OssService {
 
-    private static readonly accessKeyId = 'LTAI4FdNNVoKdMWRPLe22ssa' // 请填写您的AccessKeyId
-    private static readonly accessKeySecret = 'L6AKp7ebpEsiUfdqK7FFoj8Qy3Fn3X' // 请填写您的AccessKeySecret
-    private static readonly endpoint = 'oss-cn-beijing.aliyuncs.com' // 请填写您的endpoint
-    private static readonly bucket = 'ossaliyunbucket2' // 请填写您的 bucketname
-    private static readonly host = "https://" + OssService.bucket + "." + OssService.endpoint // host的格式为 bucketname.endpoint
+    public static readonly accessKeyId = 'LTAI4FdNNVoKdMWRPLe22ssa' // 请填写您的AccessKeyId
+    public static readonly accessKeySecret = 'L6AKp7ebpEsiUfdqK7FFoj8Qy3Fn3X' // 请填写您的AccessKeySecret
+    public static readonly endpoint = 'oss-cn-beijing.aliyuncs.com' // 请填写您的endpoint
+    public static readonly bucket = 'ossaliyunbucket2' // 请填写您的 bucketname
+    public static readonly host = "https://" + OssService.bucket + "." + OssService.endpoint // host的格式为 bucketname.endpoint
 
     // callbackUrl为 上传回调服务器的URL，请将下面的IP和Port配置为您自己的真实信息
-    private static readonly callbackUrl = 'http://47.56.164.203'
+    public static readonly callbackUrl = 'http://47.56.164.203'
     // callbackbody内容
-    private static readonly callbackBody = 'bucket=${bucket}&object=${object}&etag=${etag}&size=${size}&mimeType=${mimeType}&imageInfo.height=${imageInfo.height}&imageInfo.width=${imageInfo.width}&imageInfo.format=${imageInfo.format}'
-    private static readonly dir = 'user-dir/' // 用户上传文件时指定的前缀
-    private static readonly region = 'oss-cn-beijing' // bucket所在区域
+    public static readonly callbackBody = 'bucket=${bucket}&object=${object}&etag=${etag}&size=${size}&mimeType=${mimeType}&imageInfo.height=${imageInfo.height}&imageInfo.width=${imageInfo.width}&imageInfo.format=${imageInfo.format}'
+    public static readonly dir = 'user-dir/' // 用户上传文件时指定的前缀
+    public static readonly region = 'oss-cn-beijing' // bucket所在区域
 
     public static readonly client = new OSS({
         accessKeyId: OssService.accessKeyId,
