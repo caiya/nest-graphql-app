@@ -30,7 +30,21 @@ import { RedisModule} from 'nestjs-redis'
       database: 'test',
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: true,
-      logger: 'debug'
+      logging: true, // 开始sql打印
+      logger: 'advanced-console', // 高亮字体的打印信息
+      extra: {
+        connectionLimit:  10,// 连接池最大连接数量, 查阅资料 建议是  core number  * 2 + n
+      },
+      cache: {
+        type: 'redis',
+        options: {
+          host: 'localhost',
+          port: 6379,
+          username: '',
+          password:'',
+          db: 0, // 这个任君选择，0～15库都可以选
+        }
+      }
     }),
     GraphQLModule.forRoot({
       context: ({ req }) => ({ req }),
