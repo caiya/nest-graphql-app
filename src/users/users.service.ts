@@ -1,10 +1,13 @@
 import { Injectable, Inject, forwardRef } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, UpdateResult, DeleteResult } from 'typeorm';
+import { Repository, UpdateResult, DeleteResult, Transaction, TransactionManager } from 'typeorm';
 import { User } from './entity/users.entity';
 import { CreateUserDto } from './dto/create-user.dto';
-import { Token } from '../graphql';
 import { AuthService } from '../auth/auth.service';
+import { Article } from '../articles/entity/articles.entity';
+
+import { Connection, EntityManager, getManager } from 'typeorm'
+import { Transactional } from 'typeorm-transactional-cls-hooked';
 
 @Injectable()
 export class UsersService {
@@ -12,16 +15,40 @@ export class UsersService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+
+    @InjectRepository(Article)
+    private readonly articleRepository: Repository<Article>,
+
     @Inject(forwardRef(() => AuthService))
     private readonly authService: AuthService
   ) { }
+
+  @Inject()
+  private readonly connection: Connection;
 
   create(user: CreateUserDto): Promise<User> {
     return this.userRepository.save(user);
   }
 
-  findAll(): Promise<User[]> {
-    return this.userRepository.find();
+  @Transactional()
+  async findAll(): Promise<User[]> {
+    const articles = await this.articleRepository.find()
+    console.log('articles: ', articles)
+    const users = await this.userRepository.find()
+    console.log('users1: ', users)
+
+    await this.articleRepository.save({
+      title: '测试',
+      content: 'hahaha',
+      userId: 1
+    })
+
+    // 这个插入会报错，触发事务回滚
+    await this.userRepository.save( {
+      username: 'caiya',
+    })
+
+    return users;
   }
 
   findOneById(uid: number): Promise<User> {

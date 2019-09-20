@@ -30,14 +30,15 @@ export class GqlJwtAuthGuard extends AuthGuard('jwt') {
     );
     const payload = await this.authService.decodeToken(token)
     if (!payload) {
-      throw new UnauthorizedException('token无效')
+      throw new UnauthorizedException()
     }
     try {
+
       // 如果token有效，再判断当前已登录的设备中有无该token
       let client = this.redisService.getClient()
       let hasExist = !!(await client.sismember(`user:login:${payload.sub}`, token))
       if (!hasExist) {
-        throw new UnauthorizedException('您的账号在其它设备已登录')
+        throw new UnauthorizedException()
       }
 
       await this.authService.isInvalidToken(token)
@@ -49,7 +50,7 @@ export class GqlJwtAuthGuard extends AuthGuard('jwt') {
           id: payload.sub
         }
         const result: Token = await this.authService.login(request.user)
-        console.log('新生成的token', result)
+        // console.log('新生成的token', result)
         request.headers['Authorization'] = `Bearer ${result.accessToken}`
         response.set({
           Authorization: `Bearer ${result.accessToken}`
@@ -69,7 +70,7 @@ export class GqlJwtAuthGuard extends AuthGuard('jwt') {
     // const userService = this.moduleRef.get(UsersService, {strict: false})
     // console.log('获取容器的userService', userService)
     if (err || !user) {
-      throw err || new UnauthorizedException('token无效');
+      throw err || new UnauthorizedException();
     }
     return user;
   }

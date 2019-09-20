@@ -10,6 +10,7 @@ import { RequirePermitsGuard } from "../permits/auth.guard";
 import { GqlJwtAuthGuard } from "../auth/gql-jwt.guard";
 import { ApiBearerAuth, ApiUseTags, ApiOperation } from "@nestjs/swagger";
 import { UserLoginDto } from "./dto/user-login.dto";
+import { Transaction, TransactionManager, EntityManager } from "typeorm";
 
 @Resolver('User')
 @ApiBearerAuth()
@@ -22,8 +23,8 @@ export class UsersResolvers {
     @Inject()
     private readonly articleService: ArticlesService;
 
-    @RequirePermits('users:list')
-    @UseGuards(GqlJwtAuthGuard, RequirePermitsGuard)
+    // @RequirePermits('users:list')
+    // @UseGuards(GqlJwtAuthGuard, RequirePermitsGuard)
     @Query('users')
     @ApiOperation({ title: '用户列表' })
     async getUsers(): Promise<User[]> {

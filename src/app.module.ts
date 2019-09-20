@@ -30,6 +30,7 @@ import { RedisModule} from 'nestjs-redis'
       database: 'test',
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: true,
+      logger: 'debug'
     }),
     GraphQLModule.forRoot({
       context: ({ req }) => ({ req }),

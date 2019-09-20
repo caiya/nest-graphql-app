@@ -34,7 +34,7 @@ export class UsersController {
     @Post('upload')
     @UseInterceptors(FileInterceptor('file'))
     async uploadFile(@UploadedFile() file) {
-        console.log(file);
+        // console.log(file);
         // const buckets = await this.ossService.listBuckets()
         const results = await this.ossService.uploadFile(file)
         // 入库+水印
@@ -43,7 +43,7 @@ export class UsersController {
 
     @Get('file')
     async getUploadUrl(@Query('name') name: string) {
-        console.log(name)
+        // console.log(name)
         const fileUrl = await this.ossService.getUploadFileUrl(name)
         return {
             url: fileUrl

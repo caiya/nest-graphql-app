@@ -6,11 +6,12 @@ import { User } from './entity/users.entity';
 import { UsersResolvers } from './users.resolvers';
 import { ArticlesModule } from '../articles/articles.module';
 import { OssModule } from '../oss/oss.module';
+import { Article } from '../articles/entity/articles.entity';
 
 @Module({
   imports: [
     OssModule,
-    TypeOrmModule.forFeature([User]), forwardRef(() => ArticlesModule)],
+    TypeOrmModule.forFeature([User, Article]), forwardRef(() => ArticlesModule)],
     providers: [UsersService, UsersResolvers],
     exports: [UsersService],
     controllers: [UsersController],

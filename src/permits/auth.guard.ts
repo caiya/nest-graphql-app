@@ -15,18 +15,18 @@ export class RequirePermitsGuard implements CanActivate {
     if (!permits) { // 如果权限为空，说明当前接口不需要任何权限即可访问
       return true;
     }
-    console.log('当前接口要求 permits：', permits)
+    // console.log('当前接口要求 permits：', permits)
     // const user = request.user; // http请求
     let user = context.getArgByIndex(2).req.user;
     
     const userInfo = await this.userService.findOneById(user.id)
     user = userInfo;
 
-    console.log('当前用户已分配 permits：', user.permits)
+    // console.log('当前用户已分配 permits：', user.permits)
 
     user.permits = user.permits.split(',')
 
-    console.log('当前user：', user)
+    // console.log('当前user：', user)
 
     // 查询当前用户权限是否匹配
     const haspPermit = () => (user.permits || []).some((permit) => permits.includes(permit));

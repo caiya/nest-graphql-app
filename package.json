@@ -44,12 +44,13 @@
     "passport": "0.4.0",
     "passport-jwt": "4.0.0",
     "passport-local": "^1.0.0",
-    "reflect-metadata": "0.1.13",
+    "reflect-metadata": "^0.1.13",
     "rimraf": "3.0.0",
     "rxjs": "6.5.3",
     "swagger-ui-express": "^4.1.0",
     "type-graphql": "^0.17.5",
-    "typeorm": "^0.2.18"
+    "typeorm": "^0.2.19",
+    "typeorm-transactional-cls-hooked": "^0.1.8"
   },
   "devDependencies": {
     "@nestjs/testing": "6.6.7",
