@@ -50,7 +50,7 @@
     "rxjs": "6.5.3",
     "swagger-ui-express": "^4.1.0",
     "type-graphql": "^0.17.5",
-    "typeorm": "^0.2.19",
+    "typeorm": "^0.2.25",
     "typeorm-transactional-cls-hooked": "^0.1.8"
   },
   "devDependencies": {
